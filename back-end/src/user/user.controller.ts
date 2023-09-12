@@ -1,6 +1,16 @@
-import { Controller, Post, Body, Get, Param, Patch } from "@nestjs/common";
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Param,
+  Delete,
+  Put,
+} from "@nestjs/common";
 import { UserService } from "./user.service";
 import { CreateUserDto } from "./dto/create-user.dto";
+import { UpdateUserDto } from "./dto/update-user.dto";
+import { User as UserModel } from "@prisma/client";
 
 @Controller("user")
 export class UserController {
@@ -16,8 +26,19 @@ export class UserController {
     return this.userService.findOne(+id);
   }
 
-  @Patch(":id")
-  update(@Param("id") id: number) {
-    return this.userService.findOne;
+  @Delete(":id")
+  remove(@Param("id") id: number) {
+    return this.userService.remove(+id);
+  }
+
+  @Put(":id")
+  update(
+    @Param("id") id: number,
+    @Body() updateUserDto: UpdateUserDto
+  ): Promise<UserModel> {
+    return this.userService.update({
+      where: { id },
+      data: updateUserDto,
+    });
   }
 }
